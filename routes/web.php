@@ -37,7 +37,8 @@ Route::namespace('App\Http\Controllers')->group(function () {
 
     // Route::post('/task-status/{task}', 'TaskController@taskStatus')->name('update.task-status');
 
-    Route::post('/update-status/{id}', 'TaskController@updateStatus')->name('update.status');
+    // Route::get('/change-status/{id}',[TaskController::class,'changeStatus']);
 
+    Route::get('/change-status/{id}', 'TaskController@changeStatus')->name('changeStatus');
 
 });

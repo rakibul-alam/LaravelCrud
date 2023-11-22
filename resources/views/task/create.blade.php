@@ -72,9 +72,6 @@
 
 
     <script>
-        $(document).ready(function() {
-            ajaxModal();
-        });
 
         // Ajax modal
         function ajaxModal() {

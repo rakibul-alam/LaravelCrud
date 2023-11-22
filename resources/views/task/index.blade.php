@@ -9,6 +9,7 @@
 @php
 use Illuminate\Support\Str;
 use App\Enums\StatusEnum;
+use App\Models\Task;
 @endphp
 <body>
     <div class="container mt-2">
@@ -28,7 +29,7 @@ use App\Enums\StatusEnum;
             </div>
         @endif
 
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="yourTable">
             <thead>
                 <tr>
                     <th>SL</th>
@@ -42,24 +43,20 @@ use App\Enums\StatusEnum;
             </thead>
             <tbody>
                 @foreach ($tasks as $index => $task)
-                    <tr>
+                    <tr data-id="{{ $task->id }}" data-status="{{ $task->status }}">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $task->title }}</td>
                         <td>{{ $task->name }}</td>
                         <td>{{ $task->release_date }}</td>
                         <td>{{ $task->description }}</td>
-
-                        <td>
-                            <div class="custom-control custom-switch status-change"
-                            data-value="{{ $task->status == StatusEnum:: Active->value ? StatusEnum:: Inactive->value : StatusEnum:: Active->value }}"
-                            data-url="{{route('update.task-status',$task->id)}}">
-                            <input type="checkbox" class="custom-control-input" id="customSwitch{{$index + 1}}"
-                                {{ $task->status == StatusEnum::Active->value ? 'checked' : '' }} name='input_switch'>
-                            <label class="custom-control-label" for="customSwitch{{$index + 1}}"></label>
-                        </div>
-                         </td>
-
-                        <td>
+                         <td>
+                            @if($task->status==1)
+                            <a href="{{ url('change-status/'.$task->id) }}" onclick="return confirm('Are you Sure?')" class="btn btn-success badge bg-outline-success">Complete</a>
+                            @else
+                            <a href="{{ url('change-status/'.$task->id) }}" onclick="return confirm('Are you Sure?')" class="btn btn-danger badge bg-outline-danger">InComplete</a>
+                            @endif
+                          </td>
+                         <td>
                             <form method="POST" action="{{ route('tasks.destroy', $task->id) }}">
                                 @method('DELETE')
                                 @csrf
@@ -77,49 +74,10 @@ use App\Enums\StatusEnum;
         {!! $tasks->links() !!}
     </div>
 
-    <script>
-        taskStatus();
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-        function taskStatus() {
-            $btnDestroy = $('.status-change');
-            $btnDestroy.on('click', function() {
-                // alert('dfsf');
-                swal({
-                    title: "Want to " + $(this).data('value') + " this?",
-                    icon: "warning",
-                    type: "warning",
-                    buttons: ["Cancel", "Yes!"],
-                    confirmButtonColor: '#0ac282',
-                    cancelButtonColor: '#fe5d70',
-                    confirmButtonText: 'Yes, confirm it!'
-                }).then((confirm) => {
-                    if (confirm) {
-                        $.ajax({
-                            url: $(this).data('url'),
-                            type: 'post',
-                            data: {
-                                '_token': '{{ csrf_token() }}',
-                                '_method': 'PATCH',
-                            },
-                            success: function(data) {
-                                if (data.redirect == true) {
-                                    return window.location.replace(data.route);
-                                }
-                            },
-                            error: function() {}
-                        });
-                    } else {
-                        let input = this.querySelector('input[name=input_switch]');
-                        if (input.checked) {
-                            input.checked = false;
-                        } else {
-                            input.checked = true;
-                        }
-                    }
-                });
-            });
-        }
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
 
 </body>
 </html>

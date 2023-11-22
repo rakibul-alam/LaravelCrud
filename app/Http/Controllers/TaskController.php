@@ -7,13 +7,14 @@ use App\Models\Task;
 use Illuminate\Support\Facades\Session ;
 use Illuminate\Http\Request;
 use PHPUnit\Event\Code\Test;
+use Toastr;
 
 class TaskController extends Controller
 {
 
     public function index()
     {
-        $tasks = Task::orderBy('id','asc')->paginate(5);
+        $tasks = Task::orderBy('id','desc')->paginate(5);
         return view('task.index', compact('tasks'));
     }
 
@@ -65,29 +66,16 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success','Task has been deleted successfully');
     }
 
-    // public function taskStatus(Task $task)
-    // {
-    //     $task->update([
-    //         'status' => $task->status == StatusEnum::Active->value ? StatusEnum::Inactive->value : StatusEnum::Active->value,
-    //     ]);
-    //     Session::flash('status', 'task Status Successfully Changed');
-
-    //     return response()->json(['redirect' => true, 'route' => route('podcasts.index')]);
-    // }
-
-    public function updateStatus(Request $request, $id)
-{
-    // Retrieve the model by ID
-    $task = Task::find($id);
-
-    // Update the status
-    $task->status = $request->status;
-    $task->save();
-
-    // Return a response (JSON, for example)
-    return response()->json([
-        'newStatus' => $task->status,
-        'message' => 'Status updated successfully'
-    ]);
-}
+    public function changeStatus($id){
+        $task = Task::select('status')->where('id',$id)->first();
+        if($task->status==1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+        Task::where('id',$id)->update(['status'=>$status]);
+        // Session::flash('status', 'Task Status Successfully Changed');
+        // Toastr::success('Status Successfully Changed', 'Success', ["positionClass" => "toast-top-right","closeButton"=> "true","progressBar"=> "true"]);
+        return redirect()->back();
+    }
 }

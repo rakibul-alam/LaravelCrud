@@ -17,4 +17,7 @@ class Task extends Model
         'status',
         'description'
     ];
+
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
 }

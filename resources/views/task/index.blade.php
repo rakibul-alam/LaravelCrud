@@ -43,7 +43,7 @@ use App\Models\Task;
             </thead>
             <tbody>
                 @foreach ($tasks as $index => $task)
-                    <tr data-id="{{ $task->id }}" data-status="{{ $task->status }}">
+                    <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $task->title }}</td>
                         <td>{{ $task->name }}</td>
@@ -66,6 +66,7 @@ use App\Models\Task;
                                 this.closest('form').submit();"><em class="icon ni ni-trash"></em>
                                     Delete</a>
                                 </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
